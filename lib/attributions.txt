@@ -1,0 +1,5 @@
+[Used in testing the mask detection model as one of the images being uploaded from the phone's drive]
+Image by <a href="https://www.freepik.com/free-photo/portrait-man-wearing-face-mask_11379907.htm#query=masked%20person&position=14&from_view=search&track=ais&uuid=11e34b8d-e255-40cc-bf28-09ab066c60f6">Freepik</a>
+Image by <a href="https://www.freepik.com/free-photo/side-view-man-with-face-mask_12417858.htm#query=masked%20person&position=45&from_view=search&track=ais&uuid=11e34b8d-e255-40cc-bf28-09ab066c60f6">Freepik</a>
+<a href="https://www.freepik.com/free-photo/african-woman-wearing-face-mask-new-normal_17830127.htm#query=masked%20woman&position=12&from_view=search&track=ais&uuid=de8e8510-d3f8-4b23-9bc3-327a2a444e25">Image by rawpixel.com</a> on Freepik
+
