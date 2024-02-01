@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_detector/camera_screen.dart';
 import 'package:mask_detector/home_screen.dart';
 
 void main() {
@@ -10,9 +11,12 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomeScreen(),
+    return MaterialApp(
+      home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
+      routes: {
+        CameraScreen.id: (context) => const CameraScreen(),
+      },
     );
   }
 }
