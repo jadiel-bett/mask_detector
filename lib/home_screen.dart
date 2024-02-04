@@ -37,11 +37,18 @@ class _HomeScreenState extends State<HomeScreen> {
         image = pickedImage;
         isImageReady = true;
       });
-      image = pickedImage;
     } else {
       // User canceled the image picking process
       print('Image picking canceled.');
     }
+  }
+
+  void _scrollToHome() {
+    _scrollController.animateTo(
+      650,
+      duration: Durations.medium1,
+      curve: Curves.ease,
+    );
   }
 
   @override
@@ -120,13 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: const EdgeInsets.only(top: 40, bottom: 100),
                     child: ElevatedButton(
-                      onPressed: () {
-                        _scrollController.animateTo(
-                          650,
-                          duration: Durations.medium1,
-                          curve: Curves.ease,
-                        );
-                      },
+                      onPressed: _scrollToHome,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: teal,
                         elevation: 5,
@@ -166,9 +167,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         GestureDetector(
                           onTap: () {
                             _pickImageFromGallery().then((value) {
-                              _scrollController.animateTo(887,
-                                  duration: Durations.medium1,
-                                  curve: Curves.ease);
+                              isImageReady
+                                  ? _scrollController.animateTo(
+                                      887,
+                                      duration: Durations.medium1,
+                                      curve: Curves.ease,
+                                    )
+                                  : null;
                             });
                           },
                           child: Card(
@@ -319,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           onPressed: () {
                             // Navigate back to the home screen or any other action
-                            Navigator.pop(context);
+                            _scrollToHome();
                           },
                           child: const Text(
                             '',
