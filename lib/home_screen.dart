@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -12,13 +14,15 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
 
   final Color background = const Color(0xFFB4E2DC);
-
   final Color teal = const Color(0xF001CEB2);
-
   final Color textColor = const Color.fromARGB(255, 196, 227, 223);
 
   final String msg =
       'Your Personal Mask Guardian. Stay Safe, Stay Covered: Smart Detection for Safer Spaces';
+
+  bool isMaskOn = true;
+  bool isImageReady = false;
+  XFile? image;
 
   Future<void> _pickImageFromGallery() async {
     // TODO: Use the android photo picker package in image picker package
@@ -29,6 +33,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (pickedImage != null) {
       // Do something with the picked image, e.g., display it or process it
       print('Image Path: ${pickedImage.path}');
+      setState(() {
+        image = pickedImage;
+        isImageReady = true;
+      });
+      image = pickedImage;
     } else {
       // User canceled the image picking process
       print('Image picking canceled.');
@@ -43,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // print(_scrollController.offset);
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -113,12 +121,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.only(top: 40, bottom: 100),
                     child: ElevatedButton(
                       onPressed: () {
-                        /// TODO: Animate the screen to scroll to reveal the bottom
-                        /// section [mask detection section]
                         _scrollController.animateTo(
                           650,
                           duration: Durations.medium1,
-                          curve: Curves.bounceInOut,
+                          curve: Curves.ease,
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -159,7 +165,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         /// Upload image from Gallery
                         GestureDetector(
                           onTap: () {
-                            _pickImageFromGallery();
+                            _pickImageFromGallery().then((value) {
+                              _scrollController.animateTo(887,
+                                  duration: Durations.medium1,
+                                  curve: Curves.ease);
+                            });
                           },
                           child: Card(
                             color: background,
@@ -191,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   /// Camera Detection
                   Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
+                    padding: const EdgeInsets.only(left: 20.0, top: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -230,16 +240,93 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   /// Scan Results
-                  Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Row(
+                  ///
+                  Visibility(
+                    visible: isImageReady,
+                    child: Column(
                       children: [
-                        Text(
-                          'Scan Results: ',
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Scan Results: ',
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                isMaskOn ? 'Mask On!' : 'Mask Off!',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: isMaskOn ? teal : Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        /// Image container
+                        Container(
+                          decoration: BoxDecoration(
+                            border: isImageReady
+                                ? Border(
+                                    top: BorderSide(
+                                      width: 5.0,
+                                      color: isMaskOn ? teal : Colors.red,
+                                    ),
+                                    bottom: BorderSide(
+                                      width: 5.0,
+                                      color: isMaskOn ? teal : Colors.red,
+                                    ),
+                                    right: BorderSide(
+                                      width: 5.0,
+                                      color: isMaskOn ? teal : Colors.red,
+                                    ),
+                                    left: BorderSide(
+                                      width: 5.0,
+                                      color: isMaskOn ? teal : Colors.red,
+                                    ),
+                                  )
+                                : const Border(),
+                          ),
+                          child: isImageReady
+                              ? Image.file(
+                                  File(image!.path),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                )
+                              : Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                  color: textColor,
+                                ),
+                        ),
+                        const SizedBox(height: 30),
+
+                        // Back Button
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: background,
+                            elevation: 2,
+                          ),
+                          onPressed: () {
+                            // Navigate back to the home screen or any other action
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            '',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ],
