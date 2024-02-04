@@ -31,15 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     if (pickedImage != null) {
-      // Do something with the picked image, e.g., display it or process it
-      print('Image Path: ${pickedImage.path}');
       setState(() {
         image = pickedImage;
         isImageReady = true;
       });
     } else {
       // User canceled the image picking process
-      print('Image picking canceled.');
     }
   }
 
@@ -67,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
             image: DecorationImage(
               image: AssetImage('assets/background_nurse.png'),
               fit: BoxFit.fitHeight,
-              opacity: 0.1,
+              opacity: 0.05,
             ),
           ),
           child: Center(
@@ -246,99 +243,103 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   /// Scan Results
                   ///
-                  Visibility(
-                    visible: isImageReady,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Scan Results: ',
-                                style: TextStyle(
-                                  color: textColor,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                  isImageReady
+                      ? Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(18.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Scan Results: ',
+                                    style: TextStyle(
+                                      color: textColor,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    isMaskOn ? 'Mask On!' : 'Mask Off!',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: isMaskOn ? teal : Colors.red,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                isMaskOn ? 'Mask On!' : 'Mask Off!',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: isMaskOn ? teal : Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        /// Image container
-                        Container(
-                          decoration: BoxDecoration(
-                            border: isImageReady
-                                ? Border(
-                                    top: BorderSide(
-                                      width: 5.0,
-                                      color: isMaskOn ? teal : Colors.red,
-                                    ),
-                                    bottom: BorderSide(
-                                      width: 5.0,
-                                      color: isMaskOn ? teal : Colors.red,
-                                    ),
-                                    right: BorderSide(
-                                      width: 5.0,
-                                      color: isMaskOn ? teal : Colors.red,
-                                    ),
-                                    left: BorderSide(
-                                      width: 5.0,
-                                      color: isMaskOn ? teal : Colors.red,
-                                    ),
-                                  )
-                                : const Border(),
-                          ),
-                          child: isImageReady
-                              ? Image.file(
-                                  File(image!.path),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.4,
-                                )
-                              : Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.4,
-                                  color: textColor,
-                                ),
-                        ),
-                        const SizedBox(height: 30),
-
-                        // Back Button
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: background,
-                            elevation: 2,
-                          ),
-                          onPressed: () {
-                            // Navigate back to the home screen or any other action
-                            _scrollToHome();
-                          },
-                          child: const Text(
-                            '',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
 
-                  const SizedBox(height: 500)
+                            /// Image container
+                            Container(
+                              decoration: BoxDecoration(
+                                border: isImageReady
+                                    ? Border(
+                                        top: BorderSide(
+                                          width: 5.0,
+                                          color: isMaskOn ? teal : Colors.red,
+                                        ),
+                                        bottom: BorderSide(
+                                          width: 5.0,
+                                          color: isMaskOn ? teal : Colors.red,
+                                        ),
+                                        right: BorderSide(
+                                          width: 5.0,
+                                          color: isMaskOn ? teal : Colors.red,
+                                        ),
+                                        left: BorderSide(
+                                          width: 5.0,
+                                          color: isMaskOn ? teal : Colors.red,
+                                        ),
+                                      )
+                                    : const Border(),
+                              ),
+                              child: isImageReady
+                                  ? Image.file(
+                                      File(image!.path),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.4,
+                                    )
+                                  : Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.4,
+                                      color: textColor,
+                                    ),
+                            ),
+                            const SizedBox(height: 30),
+
+                            // Back Button
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: teal,
+                                elevation: 2,
+                              ),
+                              onPressed: () {
+                                // Navigate back to the home screen or any other action
+                                setState(() {
+                                  isImageReady = false;
+                                });
+                                _scrollToHome();
+                              },
+                              child: const Text(
+                                'Detect Again',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 100)
+                          ],
+                        )
+                      : const SizedBox(height: 500)
                 ],
               ),
             ),
