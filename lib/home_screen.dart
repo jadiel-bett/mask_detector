@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tflite_v2/tflite_v2.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,9 +22,47 @@ class _HomeScreenState extends State<HomeScreen> {
   final String msg =
       'Your Personal Mask Guardian. Stay Safe, Stay Covered: Smart Detection for Safer Spaces';
 
-  bool isMaskOn = true;
+  bool isMaskOn = false;
   bool isImageReady = false;
+  bool busy = false;
   XFile? image;
+  dynamic imageResult;
+
+  Future loadModel() async {
+    Tflite.close();
+    try {
+      var res = await Tflite.loadModel(
+        model: "assets/model_unquant.tflite",
+        labels: "assets/labels.txt",
+        numThreads: 1, // defaults to 1
+        isAsset:
+            true, // defaults to true, set to false to load resources outside assets
+        useGpuDelegate:
+            false, // defaults to false, set to true to use GPU delegate
+      );
+
+      print(res);
+    } on PlatformException {
+      print('Failed to load model.');
+    }
+  }
+
+  void detectMaskOnImage(String path) async {
+    int startTime = DateTime.now().millisecondsSinceEpoch;
+    var recognitions = await Tflite.runModelOnImage(
+      path: path,
+      numResults: 6,
+      threshold: 0.05,
+      imageMean: 127.5,
+      imageStd: 127.5,
+    );
+    setState(() {
+      imageResult = recognitions![0];
+    });
+    int endTime = DateTime.now().millisecondsSinceEpoch;
+    print(recognitions);
+    print("Inference took ${endTime - startTime}ms");
+  }
 
   Future<void> _pickImageFromGallery() async {
     // TODO: Use the android photo picker package in image picker package
@@ -35,6 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
         image = pickedImage;
         isImageReady = true;
       });
+
+      // Perform Image classification / Identify whether mask is on
+      detectMaskOnImage(pickedImage.path);
     } else {
       // User canceled the image picking process
     }
@@ -46,6 +89,17 @@ class _HomeScreenState extends State<HomeScreen> {
       duration: Durations.medium1,
       curve: Curves.ease,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    busy = true;
+    loadModel().then((value) {
+      setState(() {
+        busy = true;
+      });
+    });
   }
 
   @override
