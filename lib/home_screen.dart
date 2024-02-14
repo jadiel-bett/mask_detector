@@ -47,6 +47,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String truncateTo2dp(double value) {
+    var result = (value * 100).toString().substring(0, 6);
+    return result;
+  }
+
   void detectMaskOnImage(String path) async {
     int startTime = DateTime.now().millisecondsSinceEpoch;
     var recognitions = await Tflite.runModelOnImage(
@@ -58,9 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     setState(() {
       imageResult = recognitions![0];
+      isMaskOn = imageResult['label'] == 'Mask On' ? true : false;
+      truncateTo2dp(imageResult['confidence']);
     });
     int endTime = DateTime.now().millisecondsSinceEpoch;
-    print(recognitions);
+    print(imageResult['label'] == '0 Mask On');
     print("Inference took ${endTime - startTime}ms");
   }
 
@@ -313,7 +320,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Text(
-                                    isMaskOn ? 'Mask On!' : 'Mask Off!',
+                                    imageResult['label'],
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: isMaskOn ? teal : Colors.red,
+                                    ),
+                                  ),
+                                  Text(
+                                    '  (${truncateTo2dp(imageResult['confidence'])}%)',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
