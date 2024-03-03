@@ -6,7 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tflite_v2/tflite_v2.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.cameras});
+
+  final List cameras;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -54,25 +56,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void detectMaskOnImage(String path) async {
     int startTime = DateTime.now().millisecondsSinceEpoch;
-    var recognitions = await Tflite.runModelOnImage(
+    await Tflite.runModelOnImage(
       path: path,
       numResults: 6,
       threshold: 0.05,
       imageMean: 127.5,
       imageStd: 127.5,
-    );
-    setState(() {
-      imageResult = recognitions![0];
-      isMaskOn = imageResult['label'] == 'Mask On' ? true : false;
-      truncateTo2dp(imageResult['confidence']);
+    ).then((value) {
+      setState(() {
+        imageResult = value![0];
+        isMaskOn = imageResult['label'] == 'Mask On' ? true : false;
+        truncateTo2dp(imageResult['confidence']);
+      });
     });
     int endTime = DateTime.now().millisecondsSinceEpoch;
-    print(imageResult['label'] == '0 Mask On');
     print("Inference took ${endTime - startTime}ms");
   }
 
   Future<void> _pickImageFromGallery() async {
-    // TODO: Use the android photo picker package in image picker package
+    // Use the android photo picker package in image picker package
     XFile? pickedImage = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
@@ -82,8 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
         image = pickedImage;
         isImageReady = true;
       });
-
-      // Perform Image classification / Identify whether mask is on
       detectMaskOnImage(pickedImage.path);
     } else {
       // User canceled the image picking process
@@ -280,7 +280,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/camera');
+                            Navigator.pushNamed(
+                              context,
+                              '/camera',
+                              arguments: widget.cameras,
+                            );
                           },
                           child: Card(
                             color: background,
@@ -320,7 +324,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Text(
-                                    imageResult['label'],
+                                    imageResult == null
+                                        ? 'Scanning...'
+                                        : imageResult['label'],
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -328,7 +334,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '  (${truncateTo2dp(imageResult['confidence'])}%)',
+                                    imageResult == null
+                                        ? ''
+                                        : '  (${truncateTo2dp(imageResult['confidence'])}%)',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
