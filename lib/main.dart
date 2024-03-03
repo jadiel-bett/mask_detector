@@ -1,8 +1,13 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_detector/camera_screen.dart';
 import 'package:mask_detector/home_screen.dart';
 
-void main() {
+late List<CameraDescription> _cameras;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  _cameras = await availableCameras();
   runApp(const MainApp());
 }
 
@@ -12,7 +17,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const HomeScreen(),
+      home: HomeScreen(cameras: [_cameras]),
       debugShowCheckedModeBanner: false,
       routes: {
         CameraScreen.id: (context) => const CameraScreen(),
