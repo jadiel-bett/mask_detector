@@ -90,9 +90,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _scrollToHome() {
+  void _scrollToHome(double offset) {
     _scrollController.animateTo(
-      650,
+      offset,
       duration: Durations.medium1,
       curve: Curves.ease,
     );
@@ -117,6 +117,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
+    // print(height);
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -125,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
             image: DecorationImage(
               image: AssetImage('assets/background_nurse.png'),
               fit: BoxFit.fitHeight,
-              opacity: 0.05,
+              opacity: 0.08,
             ),
           ),
           child: Center(
@@ -135,72 +139,80 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   /// Top Section
-                  /// MaskGuard Logo
-                  Padding(
-                    padding: const EdgeInsets.only(top: 70, bottom: 15),
-                    child: Image.asset(
-                      'assets/mask_icon.png',
-                      scale: 2,
-                    ),
-                  ),
-
-                  /// Brand Name
-                  Text(
-                    'MaskGuard',
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 40,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-
-                  /// Intro Message
-                  Text(
-                    'Welcome to MaskGuard 👮‍♂️',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 70,
-                      vertical: 8,
-                    ),
-                    child: Text(
-                      msg,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: textColor,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-
-                  /// Start Detection Button
-                  Padding(
-                    padding: const EdgeInsets.only(top: 40, bottom: 100),
-                    child: ElevatedButton(
-                      onPressed: _scrollToHome,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: teal,
-                        elevation: 5,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 24,
+                  SizedBox(
+                    height: height,
+                    // color: Colors.amber,
+                    child: Column(
+                      children: [
+                        /// MaskGuard Logo
+                        Padding(
+                          padding: const EdgeInsets.only(top: 70, bottom: 15),
+                          child: Image.asset(
+                            'assets/mask_icon.png',
+                            scale: 2,
+                          ),
                         ),
-                      ),
-                      child: const Text(
-                        'Start Mask Detection',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
+
+                        /// Brand Name
+                        Text(
+                          'MaskGuard',
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 40,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 30),
+
+                        /// Intro Message
+                        Text(
+                          'Welcome to MaskGuard 👮‍♂️',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 70,
+                            vertical: 8,
+                          ),
+                          child: Text(
+                            msg,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: textColor,
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+
+                        /// Start Detection Button
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40, bottom: 100),
+                          child: ElevatedButton(
+                            onPressed: () => _scrollToHome(height),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: teal,
+                              elevation: 5,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 24,
+                              ),
+                            ),
+                            child: const Text(
+                              'Start Mask Detection',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
@@ -227,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             _pickImageFromGallery().then((value) {
                               isImageReady
                                   ? _scrollController.animateTo(
-                                      887,
+                                      1.5 * height,
                                       duration: Durations.medium1,
                                       curve: Curves.ease,
                                     )
@@ -402,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 setState(() {
                                   isImageReady = false;
                                 });
-                                _scrollToHome();
+                                _scrollToHome(height);
                               },
                               child: const Text(
                                 'Detect Again',
@@ -413,10 +425,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 100)
+                            const SizedBox(height: 500)
                           ],
                         )
-                      : const SizedBox(height: 500)
+                      : const SizedBox(height: 600)
                 ],
               ),
             ),
