@@ -64,7 +64,6 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     // _cameras = ModalRoute.of(context)!.settings.arguments as List;
-    print(_cameras);
     if (!cameraController.value.isInitialized) {
       return Container();
     }
