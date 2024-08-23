@@ -50,7 +50,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String truncateTo2dp(double value) {
-    var result = (value * 100).toString().substring(0, 6);
+    String result;
+    if (value == 1.0) {
+      result = (value * 100).toString();
+    } else {
+      result = (value * 100).toString().substring(0, 5);
+    }
+
     return result;
   }
 
@@ -141,7 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   /// Top Section
                   SizedBox(
                     height: height,
-                    // color: Colors.amber,
                     child: Column(
                       children: [
                         /// MaskGuard Logo
@@ -239,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             _pickImageFromGallery().then((value) {
                               isImageReady
                                   ? _scrollController.animateTo(
-                                      1.5 * height,
+                                      1.4 * height,
                                       duration: Durations.medium1,
                                       curve: Curves.ease,
                                     )
@@ -403,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 30),
 
-                            // Back Button
+                            // Detect again Button
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: teal,
@@ -411,9 +416,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               onPressed: () {
                                 // Navigate back to the home screen or any other action
-                                setState(() {
-                                  isImageReady = false;
-                                });
                                 _scrollToHome(height);
                               },
                               child: const Text(
