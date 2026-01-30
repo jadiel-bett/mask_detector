@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       print(res);
     } on PlatformException {
-      print('Failed to load model.');
+      // print('Failed to load model.');
     }
   }
 
@@ -75,8 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
         truncateTo2dp(imageResult['confidence']);
       });
     });
-    int endTime = DateTime.now().millisecondsSinceEpoch;
-    print("Inference took ${endTime - startTime}ms");
+    // int endTime = DateTime.now().millisecondsSinceEpoch;
+    // print("Inference took ${endTime - startTime}ms");
   }
 
   Future<void> _pickImageFromGallery() async {
